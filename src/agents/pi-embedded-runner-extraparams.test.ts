@@ -1957,7 +1957,7 @@ describe("applyExtraParamsToAgent", () => {
         input: "caller-provided scalar input",
       },
       context: {
-        messages: [{ role: "user", content: "context-derived prompt" }],
+        messages: [{ role: "user", content: "context-derived prompt", timestamp: Date.now() }],
       },
     });
 
@@ -1979,7 +1979,7 @@ describe("applyExtraParamsToAgent", () => {
         stream: false,
       },
       context: {
-        messages: [{ role: "user", content: "context-derived prompt" }],
+        messages: [{ role: "user", content: "context-derived prompt", timestamp: Date.now() }],
       },
     });
 
