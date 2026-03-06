@@ -1789,7 +1789,7 @@ describe("applyExtraParamsToAgent", () => {
     ]);
   });
 
-  it("does not apply gpt-5.2 compat rewrites to sub2api-passthrough gpt-5.4", () => {
+  it("applies sub2api gpt-5.4 compat rewrites to sub2api-passthrough gpt-5.4", () => {
     const payload = runResponsesPayloadMutationCase({
       applyProvider: "sub2api-passthrough",
       applyModelId: "gpt-5.4",
@@ -1808,14 +1808,41 @@ describe("applyExtraParamsToAgent", () => {
       },
     });
 
-    expect(payload.instructions).toBeUndefined();
-    expect(payload.input).toBeUndefined();
-    expect(payload.messages).toEqual([
-      { role: "system", content: "system note" },
-      { role: "user", content: "hello" },
+    expect(payload.instructions).toBe("system note");
+    expect(payload.input).toEqual([
+      {
+        type: "message",
+        role: "user",
+        content: [{ type: "input_text", text: "hello" }],
+      },
     ]);
-    expect(payload.stream).toBe(false);
+    expect(payload.messages).toBeUndefined();
+    expect(payload.stream).toBe(true);
     expect(payload.store).toBe(false);
+  });
+
+  it("drops unsupported previous_response_id and max_output_tokens for sub2api gpt-5.4", () => {
+    const payload = runResponsesPayloadMutationCase({
+      applyProvider: "sub2api",
+      applyModelId: "gpt-5.4",
+      model: {
+        api: "openai-responses",
+        provider: "sub2api",
+        id: "gpt-5.4",
+      } as Model<"openai-responses">,
+      initialPayload: {
+        store: false,
+        stream: false,
+        previous_response_id: "resp_prev",
+        max_output_tokens: 32000,
+        input: "hello",
+      },
+    });
+
+    expect(payload.previous_response_id).toBeUndefined();
+    expect(payload.max_output_tokens).toBeUndefined();
+    expect(payload.instructions).toBe("You are a helpful assistant.");
+    expect(payload.stream).toBe(true);
   });
 
   it("does not downgrade required tool_choice for sub2api-passthrough gpt-5.4 without tools", () => {
@@ -2038,6 +2065,27 @@ describe("applyExtraParamsToAgent", () => {
         content: [{ type: "input_text", text: "context-derived prompt" }],
       },
     ]);
+    expect(payload.stream).toBe(true);
+  });
+
+  it("applies sub2api gpt-5.4 responses compat for missing instructions", () => {
+    const payload = runResponsesPayloadMutationCase({
+      applyProvider: "sub2api",
+      applyModelId: "gpt-5.4",
+      model: {
+        api: "openai-responses",
+        provider: "sub2api",
+        id: "gpt-5.4",
+      } as Model<"openai-responses">,
+      initialPayload: {
+        store: false,
+        stream: false,
+        input: "hello",
+      },
+    });
+
+    expect(payload.input).toBe("hello");
+    expect(payload.instructions).toBe("You are a helpful assistant.");
     expect(payload.stream).toBe(true);
   });
 

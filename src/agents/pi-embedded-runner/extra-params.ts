@@ -869,7 +869,7 @@ function shouldApplySub2apiGpt52PayloadCompat(params: {
   }
   const provider = params.provider.trim().toLowerCase();
   const modelId = params.modelId.trim().toLowerCase();
-  return provider.startsWith("sub2api") && modelId === "gpt-5.2";
+  return provider.startsWith("sub2api") && (modelId === "gpt-5.2" || modelId === "gpt-5.4");
 }
 
 function extractPlainTextFromMessageContent(content: unknown): string {
@@ -967,6 +967,10 @@ function normalizeMessagesToResponsesInput(
 }
 
 function normalizeSub2apiGpt52Payload(payloadObj: Record<string, unknown>): void {
+  // sub2api gpt-5.x rejects these fields on /v1/responses.
+  delete payloadObj.previous_response_id;
+  delete payloadObj.max_output_tokens;
+
   const messages = Array.isArray(payloadObj.messages)
     ? (payloadObj.messages as PayloadMessage[])
     : undefined;
