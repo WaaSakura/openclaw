@@ -1789,6 +1789,54 @@ describe("applyExtraParamsToAgent", () => {
     ]);
   });
 
+  it("does not apply gpt-5.2 compat rewrites to sub2api-passthrough gpt-5.4", () => {
+    const payload = runResponsesPayloadMutationCase({
+      applyProvider: "sub2api-passthrough",
+      applyModelId: "gpt-5.4",
+      model: {
+        api: "openai-responses",
+        provider: "sub2api-passthrough",
+        id: "gpt-5.4",
+      } as Model<"openai-responses">,
+      initialPayload: {
+        store: false,
+        stream: false,
+        messages: [
+          { role: "system", content: "system note" },
+          { role: "user", content: "hello" },
+        ],
+      },
+    });
+
+    expect(payload.instructions).toBeUndefined();
+    expect(payload.input).toBeUndefined();
+    expect(payload.messages).toEqual([
+      { role: "system", content: "system note" },
+      { role: "user", content: "hello" },
+    ]);
+    expect(payload.stream).toBe(false);
+    expect(payload.store).toBe(false);
+  });
+
+  it("does not downgrade required tool_choice for sub2api-passthrough gpt-5.4 without tools", () => {
+    const payload = runResponsesPayloadMutationCase({
+      applyProvider: "sub2api-passthrough",
+      applyModelId: "gpt-5.4",
+      model: {
+        api: "openai-responses",
+        provider: "sub2api-passthrough",
+        id: "gpt-5.4",
+      } as Model<"openai-responses">,
+      initialPayload: {
+        store: false,
+        tool_choice: "required",
+      },
+    });
+
+    expect(payload.tool_choice).toBe("required");
+    expect(payload.store).toBe(false);
+  });
+
   it("converts sub2api gpt-5.2 messages into responses input and forces stream", () => {
     const payload = runResponsesPayloadMutationCase({
       applyProvider: "sub2api",
