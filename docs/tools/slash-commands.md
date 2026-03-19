@@ -223,6 +223,7 @@ Notes:
 ## MCP updates
 
 `/mcp` writes OpenClaw-managed MCP server definitions under `mcp.servers`. Owner-only. Disabled by default; enable with `commands.mcp: true`.
+`mcp.servers` supports `url` entries for remote MCP servers such as AgentManager.
 
 Examples:
 
@@ -230,6 +231,7 @@ Examples:
 /mcp show
 /mcp show context7
 /mcp set context7={"command":"uvx","args":["context7-mcp"]}
+/mcp set agentmanager={"url":"http://127.0.0.1:4173/mcp","headers":{"Authorization":"Bearer <MCP_TOKEN>"}}
 /mcp unset context7
 ```
 
@@ -237,6 +239,7 @@ Notes:
 
 - `/mcp` stores config in OpenClaw config, not Pi-owned project settings.
 - Runtime adapters decide which transports are actually executable.
+- For a complete operator-facing remote MCP example, see [AgentManager remote MCP setup](/docs/reference/agentmanager-mcp.md).
 
 ## Plugin updates
 
