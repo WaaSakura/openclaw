@@ -225,6 +225,19 @@ Notes:
 `/mcp` writes OpenClaw-managed MCP server definitions under `mcp.servers`. Owner-only. Disabled by default; enable with `commands.mcp: true`.
 `mcp.servers` supports `url` entries for remote MCP servers such as AgentManager.
 
+Quick path for a remote AgentManager MCP server:
+
+```text
+/mcp set agentmanager={"url":"http://127.0.0.1:4173/mcp","headers":{"Authorization":"Bearer ${AGENTMANAGER_MCP_TOKEN}"}}
+```
+
+Recommended follow-up checks:
+
+- no token to `/mcp` -> `401`
+- `resources/list`
+- read `agentmanager://system/health`
+- read `agentmanager://system/mcp-principal`
+
 Examples:
 
 ```text
@@ -239,6 +252,7 @@ Notes:
 
 - `/mcp` stores config in OpenClaw config, not Pi-owned project settings.
 - Runtime adapters decide which transports are actually executable.
+- Some embedded or runtime-adapter paths in OpenClaw may still be stdio-only today.
 - For a complete operator-facing remote MCP example, see [AgentManager remote MCP setup](/docs/reference/agentmanager-mcp.md).
 
 ## Plugin updates

@@ -2,6 +2,36 @@
 
 This page shows how to connect OpenClaw to an AgentManager MCP server running on the network.
 
+## Quick path
+
+If you already know the AgentManager host and token, add a remote server entry under `mcp.servers.<name>.url`:
+
+```json
+{
+  "mcp": {
+    "servers": {
+      "agentmanager": {
+        "url": "http://127.0.0.1:4173/mcp",
+        "headers": {
+          "Authorization": "Bearer ${AGENTMANAGER_MCP_TOKEN}"
+        }
+      }
+    }
+  }
+}
+```
+
+Then load it with `/mcp set`:
+
+```text
+/mcp set agentmanager={"url":"http://127.0.0.1:4173/mcp","headers":{"Authorization":"Bearer ${AGENTMANAGER_MCP_TOKEN}"}}
+```
+
+Recommended next check:
+
+- read `agentmanager://system/mcp-principal`
+- confirm the token's `scopes` and `dangerousAllowed` flags match what you intended
+
 ## What you are connecting to
 
 - AgentManager exposes a Streamable HTTP MCP server at `/mcp`.
@@ -53,6 +83,7 @@ Expected resources include:
 - `agentmanager://system/report`
 - `agentmanager://system/operator-queue`
 - `agentmanager://system/governance-board`
+- `agentmanager://system/mcp-principal`
 - `agentmanager://projects`
 
 3. Read `agentmanager://system/health` and confirm the control-plane summary is returned.
@@ -107,6 +138,13 @@ Run observability:
 - resolved runtime config
 - provider / model
 - runtime source and override metadata
+
+Principal self-description:
+
+- current token name
+- scopes
+- dangerous permission
+- allowed resource prefixes / tool groups
 
 ## Related docs
 
