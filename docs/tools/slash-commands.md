@@ -228,7 +228,7 @@ Notes:
 Quick path for a remote AgentManager MCP server:
 
 ```text
-/mcp set agentmanager={"url":"http://127.0.0.1:4173/mcp","headers":{"Authorization":"Bearer ${AGENTMANAGER_MCP_TOKEN}"}}
+/mcp set agentmanager={"url":"http://127.0.0.1:4173/mcp","headers":{"Authorization":"Bearer ${AGENTMANAGER_OBSERVER_TOKEN}"}}
 ```
 
 Recommended follow-up checks:
@@ -237,6 +237,8 @@ Recommended follow-up checks:
 - `resources/list`
 - read `agentmanager://system/health`
 - read `agentmanager://system/mcp-principal`
+- read `agentmanager://system/mcp-capabilities`
+- switch to `${AGENTMANAGER_OPERATOR_TOKEN}` only when write or dangerous controls are required
 
 Examples:
 
@@ -244,7 +246,8 @@ Examples:
 /mcp show
 /mcp show context7
 /mcp set context7={"command":"uvx","args":["context7-mcp"]}
-/mcp set agentmanager={"url":"http://127.0.0.1:4173/mcp","headers":{"Authorization":"Bearer <MCP_TOKEN>"}}
+/mcp set agentmanager={"url":"http://127.0.0.1:4173/mcp","headers":{"Authorization":"Bearer ${AGENTMANAGER_OBSERVER_TOKEN}"}}
+/mcp set agentmanager={"url":"http://127.0.0.1:4173/mcp","headers":{"Authorization":"Bearer ${AGENTMANAGER_OPERATOR_TOKEN}"}}
 /mcp unset context7
 ```
 

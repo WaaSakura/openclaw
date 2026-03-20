@@ -4,7 +4,7 @@ This page shows how to connect OpenClaw to an AgentManager MCP server running on
 
 ## Quick path
 
-If you already know the AgentManager host and token, add a remote server entry under `mcp.servers.<name>.url`:
+If you already know the AgentManager host and want the recommended default, start with the read-only `openclaw-observer` token under `mcp.servers.<name>.url`:
 
 ```json
 {
@@ -13,7 +13,7 @@ If you already know the AgentManager host and token, add a remote server entry u
       "agentmanager": {
         "url": "http://127.0.0.1:4173/mcp",
         "headers": {
-          "Authorization": "Bearer ${AGENTMANAGER_MCP_TOKEN}"
+          "Authorization": "Bearer ${AGENTMANAGER_OBSERVER_TOKEN}"
         }
       }
     }
@@ -24,13 +24,20 @@ If you already know the AgentManager host and token, add a remote server entry u
 Then load it with `/mcp set`:
 
 ```text
-/mcp set agentmanager={"url":"http://127.0.0.1:4173/mcp","headers":{"Authorization":"Bearer ${AGENTMANAGER_MCP_TOKEN}"}}
+/mcp set agentmanager={"url":"http://127.0.0.1:4173/mcp","headers":{"Authorization":"Bearer ${AGENTMANAGER_OBSERVER_TOKEN}"}}
+```
+
+Operator escalation path:
+
+```text
+/mcp set agentmanager={"url":"http://127.0.0.1:4173/mcp","headers":{"Authorization":"Bearer ${AGENTMANAGER_OPERATOR_TOKEN}"}}
 ```
 
 Recommended next check:
 
 - read `agentmanager://system/mcp-principal`
-- confirm the token's `scopes` and `dangerousAllowed` flags match what you intended
+- read `agentmanager://system/mcp-capabilities`
+- confirm the token's `scopes`, `mode`, and `dangerousAllowed` fields match what you intended
 
 ## What you are connecting to
 
@@ -49,7 +56,7 @@ Use a URL-based MCP server entry under `mcp.servers`:
       "agentmanager": {
         "url": "http://127.0.0.1:4173/mcp",
         "headers": {
-          "Authorization": "Bearer ${AGENTMANAGER_MCP_TOKEN}"
+          "Authorization": "Bearer ${AGENTMANAGER_OBSERVER_TOKEN}"
         }
       }
     }
@@ -61,7 +68,7 @@ Recommended notes:
 
 - Keep the token in an environment variable or secret store.
 - Replace `127.0.0.1` with the AgentManager host IP or DNS name when connecting over LAN.
-- Use the same bearer token you configured for AgentManager `MCP_TOKEN`.
+- Use `openclaw-observer` for the default day-to-day path, and switch to `openclaw-operator` only when write or dangerous controls are required. Keep legacy `MCP_TOKEN` only as a compatibility fallback.
 
 ## Minimal validation flow
 
@@ -87,6 +94,11 @@ Expected resources include:
 - `agentmanager://projects`
 
 3. Read `agentmanager://system/health` and confirm the control-plane summary is returned.
+
+Read these self-description resources next:
+
+- `agentmanager://system/mcp-principal`
+- `agentmanager://system/mcp-capabilities`
 
 4. Call a safe tool, such as:
 
@@ -145,6 +157,8 @@ Principal self-description:
 - scopes
 - dangerous permission
 - allowed resource prefixes / tool groups
+- current mode (`observer` / `operator` / `legacy`)
+- recommended observer-first guidance
 
 ## Related docs
 
