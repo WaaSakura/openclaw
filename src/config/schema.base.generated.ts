@@ -1038,6 +1038,7 @@ export const GENERATED_BASE_CONFIG_SCHEMA = {
                     "github-copilot",
                     "bedrock-converse-stream",
                     "ollama",
+                    "azure-openai-responses",
                   ],
                 },
                 injectNumCtxForOpenAICompat: {
@@ -1142,6 +1143,7 @@ export const GENERATED_BASE_CONFIG_SCHEMA = {
                           "github-copilot",
                           "bedrock-converse-stream",
                           "ollama",
+                          "azure-openai-responses",
                         ],
                       },
                       reasoning: {
@@ -2303,6 +2305,19 @@ export const GENERATED_BASE_CONFIG_SCHEMA = {
                 },
                 additionalProperties: false,
               },
+              llm: {
+                type: "object",
+                properties: {
+                  idleTimeoutSeconds: {
+                    description:
+                      "Idle timeout for LLM streaming responses in seconds. If no token is received within this time, the request is aborted. Set to 0 to disable. Default: 60 seconds.",
+                    type: "integer",
+                    minimum: 0,
+                    maximum: 9007199254740991,
+                  },
+                },
+                additionalProperties: false,
+              },
               compaction: {
                 type: "object",
                 properties: {
@@ -2807,6 +2822,9 @@ export const GENERATED_BASE_CONFIG_SCHEMA = {
                     type: "integer",
                     exclusiveMinimum: 0,
                     maximum: 9007199254740991,
+                  },
+                  requireAgentId: {
+                    type: "boolean",
                   },
                 },
                 additionalProperties: false,
@@ -3963,6 +3981,9 @@ export const GENERATED_BASE_CONFIG_SCHEMA = {
                     },
                     thinking: {
                       type: "string",
+                    },
+                    requireAgentId: {
+                      type: "boolean",
                     },
                   },
                   additionalProperties: false,
@@ -10874,6 +10895,10 @@ export const GENERATED_BASE_CONFIG_SCHEMA = {
                   },
                 ],
               },
+              searchTool: {
+                type: "string",
+                minLength: 1,
+              },
               includeDefaultMemory: {
                 type: "boolean",
               },
@@ -13607,6 +13632,11 @@ export const GENERATED_BASE_CONFIG_SCHEMA = {
     "memory.qmd.searchMode": {
       label: "QMD Search Mode",
       help: 'Selects the QMD retrieval path: "query" uses standard query flow, "search" uses search-oriented retrieval, and "vsearch" emphasizes vector retrieval. Keep default unless tuning relevance quality.',
+      tags: ["storage"],
+    },
+    "memory.qmd.searchTool": {
+      label: "QMD Search Tool Override",
+      help: "Overrides the exact mcporter tool name used for QMD searches while preserving `searchMode` as the semantic retrieval mode. Use this only when your QMD MCP server exposes a custom tool such as `hybrid_search` and keep it unset for the normal built-in tool mapping.",
       tags: ["storage"],
     },
     "memory.qmd.includeDefaultMemory": {
